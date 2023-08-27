@@ -8,15 +8,24 @@
     <button id="generateButton">Generate</button>
 
     <script>
-        document.getElementById("generateButton").addEventListener("click", function () {
-            // Generate a random name for the new page
-            var randomPageName = "page" + Math.floor(Math.random() * 100000);
-            
-            // Create a new webpage with the random name
-            var newPage = window.open("", randomPageName);
-            
-            // Redirect the user to the new page
-            newPage.location.href = randomPageName + ".html";
+        document.getElementById("generateButton").addEventListener("click", async function () {
+            try {
+                const response = await fetch("/generate-page", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + process.env.token
+                    }
+                });
+
+                if (response.status === 200) {
+                    const pageUrl = await response.text();
+                    window.location.href = pageUrl;
+                } else {
+                    console.error("Failed to generate page");
+                }
+            } catch (error) {
+                console.error("An error occurred:", error);
+            }
         });
     </script>
 </body>
